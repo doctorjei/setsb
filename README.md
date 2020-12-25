@@ -1,7 +1,7 @@
-SetSB: Mixer Setting Utility (v0.91b)
---------------------------------------------------------------------------------
+# SetSB: Mixer Setting Utility (v0.91b)
 Copyright (C) 1998 Jeremiah Blanchard
 
+## License
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
@@ -15,8 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
---------------------------------------------------------------------------------
 
+## About SetSB
 SetSB is a mixer setting utility for your Sound Blaster or compatible sound
 card. I don't know if it'll work on everything - it's beta. So far, the only
 thing I know is that SetSB works on is my sound card, which is a Sound Blaster
@@ -29,6 +29,7 @@ entire package from http://fruitbat.n3.net. This package comes with source for
 DJGPP and for Borland C++. If the source was not included and you can't get it
 from my homepage, try mailing me at squirminworm@geocities.com.
 
+## Using this Program
 A DPMI server is required to run the DJGPP version of this program. If you don't
 have a DPMI server running, simply download CWSDPMI and place it somewhere that
 it can be accessed by SetSB (for instance, in the directory from which it is run
@@ -53,8 +54,7 @@ setsb -s [<config file>]
 The default file that comes with setsb, setsb.cfg, might be a good starting
 point if you're unfamiliar with common settings.
 
-** DISCLAIMER **
-
+## **DISCLAIMER**
 USE THIS PROGRAM AT YOUR OWN RISK. I AM NOT RESPONSIBLE FOR ANYTHING
 IT MAY DO TO YOUR COMPUTER. <And if you sue me, it won't help - I'm poor.
 And ya know, you can't suck water out of a well that's dry.> THIS SOFTWARE
@@ -63,5 +63,3 @@ IS NOT COMPLETE AND COMES WITH NO GUARANTEES WHATSOEVER.
 Enjoy.
 
                                                     Jeremiah Blanchard
-                                                squirminworm@geocities.com
-                                                 http://fruitbat.n3.net
