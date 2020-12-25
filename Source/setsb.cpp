@@ -17,42 +17,83 @@
 
    P.P.S.  If you have any questions or bug reports, feel free to email me. */
 
-#include <ctype.h>
-#include <dos.h>
+// Turbo C++ Uses ".h" versions of headers
+#ifdef __TURBOC__
+#include <iostream.h>
+#include <fstream.h>
+#include <iomanip.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
-#include <iomanip.h>
-#include <fstream.h>
+#else
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <cstdlib>
+#include <cstring>
 
-#define DSP		0xAA	/* byte DSP returns when ready */
-#define MASTERVOL	0x22
-#define VOICEVOL	0x04
-#define MIDIVOL		0x26
-#define CDVOL		0x28
-#define MICVOL		0x0A
-#define ADCSELECT	0x0C
+using namespace std;
+#endif
+
+#include <ctype.h>
+#include <dos.h>
+
+#define DSP         0xAA   /* byte DSP returns when ready */
+#define MASTERVOL   0x22
+#define VOICEVOL    0x04
+#define MIDIVOL     0x26
+#define CDVOL       0x28
+#define MICVOL      0x0A
+#define ADCSELECT   0x0C
 
 struct
-  {                                          // Structure for file
-   unsigned char VoiceVol, MasterVol, MicVol, CDVol, MIDIVol, unused;
-   unsigned int sbaddr;
-  } vol;
+{// Structure for file
+ unsigned char VoiceVol, MasterVol, MicVol, CDVol, MIDIVol, unused;
+ unsigned short int sbaddr;
+} vol;
 
-void mode(int modenum)
+void mode(short int modenum)
 {
+// Execute Turbo C++ version if applicable; fall back to GCC.
+#ifdef __TURBOC__
  _AX=modenum;
  geninterrupt(0x10);
+#else
+ asm
+ (
+  "movw %0, %%ax\n"
+  "int $0x10\n"
+  :
+  : "g"(modenum)
+  : "ax", "memory"
+ );
+#endif
 }
 
 char takechar()
 {
+ char returnchar=0;
+
+// Execute Turbo C++ version if applicable; fall back to GCC.
+#ifdef __TURBOC__
  _AX = 0;
  geninterrupt(0x16);
- return(_AL);
+ returnchar = _AL;
+#else
+ asm
+ (
+  "movw $0, %%ax\n"
+  "int $0x22\n"
+  "movb %%al, %0\n"
+  : "=g"(returnchar)
+  :
+  :"ax", "memory"
+ );
+#endif
+
+ return(returnchar);
 }
 
-char *num_to_hex(int number, char *whereto)
+char *num_to_hex(short int number, char *whereto)
 {
  for (char index = 0; index < 4; index++)
  {
@@ -77,14 +118,14 @@ char *num_to_hex(int number, char *whereto)
   }
  }
  whereto[4] = 0;
-return(whereto);
+ return(whereto);
 }
 
 long hex_to_num(char *hexstr)
 {
  long hexnum = 0;
 
- for(int index = 0; index < strlen(hexstr); index++)
+ for(short int index = 0; index < strlen(hexstr); index++)
  {
   hexnum <<= 4;
   switch (toupper(hexstr[index]))
@@ -107,25 +148,25 @@ long hex_to_num(char *hexstr)
    case 'F': hexnum += 0xF; break;
   }
  }
-return(hexnum);
+ return(hexnum);
 }
 
 
-unsigned int get_dsp()
+unsigned short int get_dsp()
 /* Get info from dsp. Wait until bit is on and read from the data port.*/
 {
- int data_read=vol.sbaddr+0xA;    /* reading address (DSP) */
- int datastatus=vol.sbaddr+0xE;   /* address to check for data status */
+ short int data_read=vol.sbaddr+0xA;    /* reading address (DSP) */
+ short int datastatus=vol.sbaddr+0xE;   /* address to check for data status */
 
  while (!(inp(datastatus) & 0x80));
  return(inp(data_read));
 }
 
-void send_dsp(unsigned int val)
+void send_dsp(unsigned short int val)
 /* Outputs a byte to the dsp.  Waits for write buffer status bit to be 0,
    then outputs the value to the write buffer. */
 {
- int writebuffer=vol.sbaddr+0xC;    /* DSP write buffer address */
+ short int writebuffer=vol.sbaddr+0xC;    /* DSP write buffer address */
 
  while (inp(writebuffer) & 0x80);
  outp(writebuffer, val);
@@ -134,9 +175,9 @@ void send_dsp(unsigned int val)
 void set_mixer(void)
 {
  char hexidecimal[5];
- int mixeraddr=vol.sbaddr+0x4,    /* mixer select port */
-     mixerdata=vol.sbaddr+0x5,    /* mixer data port */
-     resetport=vol.sbaddr+0x6;    /* reset port address */
+ short int mixeraddr=vol.sbaddr+0x4,    /* mixer select port */
+           mixerdata=vol.sbaddr+0x5,    /* mixer data port */
+           resetport=vol.sbaddr+0x6;    /* reset port address */
  mode(0x03);
  cout << "SetSB Sound Blaster Mixer Setting Utility\n"
       << "Copyright (C) 1998 Jeremiah Blanchard - FEEL FREE TO DISTRIBUTE!\n"
@@ -176,22 +217,20 @@ void set_mixer(void)
 char openfile(char *filename)
 {
    ifstream configfile;
-
-   configfile.open(filename, ios::nocreate);
+   configfile.open(filename);
    if (!configfile) return(1);
-   if (!configfile.read((char *) &vol, sizeof(vol)))
-       {configfile.close(); return(1);}
+   if(!configfile.read((char *) &vol, sizeof(vol)))
+      {configfile.close(); return(1);}
    configfile.close();
    return(0);
 }
 
 char parseparam(char *param) /* parameter parser */
 {
- int index;
 
  if (param[0]!='-' && param[0]!='/') /* if not parameter, is it a filename? */
    {
-    for (index=0; index <=strlen(param); index++)
+    for (short int index=0; index <=strlen(param); index++)
       {
        if (param[index]=='\0') break; /* if end of string, end loop */
        if (iscntrl(param[index]))
@@ -234,14 +273,13 @@ return(0);
 
 char disp_menu()
 {
- union { unsigned int decm; unsigned char character:4, micbits:2; } val;
  unsigned char *ptr, dist, result;	/* pointer to variable to be set */
  char choiceval, channel[]="VoiceVol\0MasterVol\0CDVol\0MIDIVol",
       rl[]="Left\0Right", hex[5], argm[3];
 
 
  mode(0x03);
- cout << "Here's the current data:\n"      /* print the current data */
+ cout << "Here is the current data:\n"
       << "(A)Left VoiceVol:   " << setw(10) << ((vol.VoiceVol & 0xf0) >> 4)
       << " (F)Left CDVol:     " << setw(10) << ((vol.CDVol & 0xf0) >> 4) << endl
       << "(B)Right VoiceVol:  " << setw(10) << (vol.VoiceVol & 0x0f)
@@ -253,7 +291,7 @@ char disp_menu()
       << "(E)MicVol:          " << setw(10) << (vol.MicVol >> 0) << " (J)SB Hex Address:     0x"
       << num_to_hex(vol.sbaddr, hex) << endl << endl
       << "(Q)uit\n\n"
-      << "Please select one: ";
+      << "Please select one: " << flush;
  choiceval = takechar();
  switch (toupper(choiceval))
  {  /* set string and pointer accordingly for generic values. */
@@ -317,18 +355,21 @@ char setupmixer(char *filename)  /* main setup function */
  if (!outfile) cout << "error saving file.\n\n";
  else
    {
+/*    if (!outfile.write("I'm a loser big time", 20))
+        cout << "Error saving file.\n\n";*/
+
     if (!outfile.write((char *) &vol, sizeof(vol)))
-	cout << "Error saving file.\n\n";
+        cout << "Error saving file.\n\n";
     outfile.close();
     cout << "done!\n\n";
    }
- cout << "\nWrite values to SB registers[y/N]? "; /* Write to registers? */
+ cout << "\nWrite values to SB registers[y/N]? "<< flush; // Write registers?
  yn = takechar();
  if (toupper(yn) == 'Y') return(1); else return(0);
 }
 
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
  char *filename, parseindex, parseval, exists = 0, runsetup = 0, setupr, err;
 
@@ -381,4 +422,5 @@ void main(int argc, char *argv[])
 
  /* Set the registers. */
  set_mixer(); /* Run SetMixer function. */
+ return 0;
 }
