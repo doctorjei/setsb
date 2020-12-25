@@ -25,9 +25,9 @@ you'd let me know if it works with your sound card, and if it doesn't, what
 happens.
 
 The source should have come in this distribution. If not, you can download the
-entire package from http://fruitbat.n3.net. This package comes with source for
-DJGPP and for Borland C++. If the source was not included and you can't get it
-from my homepage, try mailing me at squirminworm@geocities.com.
+entire package from https://github.com/doctorjei/setsb. This package comes with
+source which works with DJGPP and Turbo C++. If the source was not included and
+you can't get it, find me on the Internet and ask.
 
 ## Using this Program
 A DPMI server is required to run the DJGPP version of this program. If you don't
@@ -39,17 +39,17 @@ running.
 
 SetSB can be easily set up in your autoexec.bat file if you are running a DOS
 compatible system. The following parameters are accepted by SetSB:
-
+~~~
 -?, -h  - display the help screen
 -s      - setup
-
+~~~
 The syntax of SetSB for autoload from a file should be:
 
 setsb <config file>
 
 To set up a new file or edit an existing one, type:
 
-setsb -s [<config file>]
+`setsb -s [<config file>]`
 
 The default file that comes with setsb, setsb.cfg, might be a good starting
 point if you're unfamiliar with common settings.
