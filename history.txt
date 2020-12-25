@@ -1,0 +1,13 @@
+History of SetSB
+----------------
+
+v.02b - First version; very buggy. I was in a hurry, ok? :P
+v.03b - Fixed pointers, removed a few unneccesary variables, made code more
+        compact, & made code compilable with GNU C Compiler.  Compiled using
+        GCC and DJGPP libraries.
+v.91b - Revamped the code; now uses cout & cin streams, a few assembler
+        routines, and file streams. Code is easier to read. Took 12 hours
+        and learned AT&T syntax for assembler, found out that DJGPP doesn't
+        like all Borland file stream commands. Made "vol" structure more
+        compact. Removed uneccessary variables.  Compiled using DJGPP.
+        Included both DJGPP source file and Borland C++.
