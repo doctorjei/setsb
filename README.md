@@ -60,6 +60,6 @@ IT MAY DO TO YOUR COMPUTER. <And if you sue me, it won't help - I'm poor.
 And ya know, you can't suck water out of a well that's dry.> THIS SOFTWARE
 IS NOT COMPLETE AND COMES WITH NO GUARANTEES WHATSOEVER.
 
-Enjoy.
+Enjoy.  
 
-                                                    Jeremiah Blanchard
+--Jeremiah Blanchard
